@@ -1,14 +1,18 @@
-from fastapi import FastAPI, Depends, HTTPException
+import sys
+sys.path.insert(0, 'E://ProyectoAPI')
+
+from fastapi import FastAPI, Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-from models import User
-from dependencies import get_db
-from schemas import UserBase
+from ApiUsuarios.models import User
+from ApiUsuarios.dependencies import get_db
+from ApiUsuarios.models import User
+from ApiUsuarios.schemas import UserBase
 from typing import List
-from crud import get_user
+from ApiUsuarios.crud import get_user
 
-app = FastAPI()
+router = APIRouter()
 
-@app.get("/users", response_model=List[UserBase])
+@router.get("/users", response_model=List[UserBase])
 async def get_users(db: Session = Depends(get_db)):
     try:
         users = db.query(User).all()
@@ -19,7 +23,7 @@ async def get_users(db: Session = Depends(get_db)):
 
 
     
-@app.get("/users/{user_id}", response_model=UserBase)
+@router.get("/users/{user_id}", response_model=UserBase)
 async def ver_usuario(user_id = int, db:Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
@@ -28,7 +32,7 @@ async def ver_usuario(user_id = int, db:Session = Depends(get_db)):
 
 
 
-@app.post("/users", response_model=UserBase)
+@router.post("/users", response_model=UserBase)
 async def create_user(user: UserBase, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.hotmail == user.hotmail).first()
 
@@ -42,7 +46,7 @@ async def create_user(user: UserBase, db: Session = Depends(get_db)):
     return new_user
 
 
-@app.put("/users/{user_id}", response_model=UserBase)
+@router.put("/users/{user_id}", response_model=UserBase)
 async def editar_usuario(user_id : int, user: UserBase, db: Session = Depends(get_db)):
     db_user = get_user(db, user_id=user_id)
 
@@ -62,7 +66,7 @@ async def editar_usuario(user_id : int, user: UserBase, db: Session = Depends(ge
 
 
 
-@app.delete("/users/{user_id}")
+@router.delete("/users/{user_id}")
 async def delete_user(user: UserBase, db:Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user.id).first()
     if not user:
