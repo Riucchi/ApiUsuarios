@@ -1,14 +1,14 @@
 import sys
 sys.path.insert(0, 'E://ProyectoAPI')
 
-from fastapi import FastAPI, Depends, HTTPException, APIRouter
+from fastapi import  Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
 from ApiUsuarios.models import User
 from ApiUsuarios.dependencies import get_db
 from ApiUsuarios.models import User
 from ApiUsuarios.schemas import UserBase
 from typing import List
-from ApiUsuarios.crud import get_user
+from ApiUsuarios.crud import get_user, add_product_to_user , remove_product_from_user
 
 router = APIRouter()
 
@@ -76,6 +76,18 @@ async def delete_user(user: UserBase, db:Session = Depends(get_db)):
     return {"mensaje": "Usuario Eliminado Exitosamente"}
 
 
+@router.post("/users/{user_id}/products/{product_id}")
+async def add_product_to_user(user_id: int, product_id: int, db: Session = Depends(get_db)):
+    user = add_product_to_user(db, user_id, product_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User or product not found")
+    return user
 
 
 
+@router.delete("/users/{user_id}/products/{product_id}")
+async def remove_product_from_user(user_id: int, product_id: int, db: Session = Depends(get_db)):
+    user = remove_product_from_user(db, user_id, product_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User or product not found")
+    return user
