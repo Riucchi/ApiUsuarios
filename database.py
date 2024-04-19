@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, User, Product # Asegúrate de importar Base y tus modelos desde models.py
 
-DATABASE_URL = "sqlite:///./users.db"
+DATABASE_URL = "sqlite:///./ApiUsuarios.db"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

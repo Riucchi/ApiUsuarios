@@ -27,7 +27,7 @@ async def get_all_products(db: Session = Depends(get_db)):
 
     
 @router.get("/product/{product_id}", response_model=ProductBase)
-async def ver_usuario(product_id = int, db:Session = Depends(get_db)):
+async def ver_producto(product_id = int, db:Session = Depends(get_db)):
     user = db.query(Product).filter(Product.id == product_id).first()
     if user is None:
         raise HTTPException(status_code=404,detail="Producto Inexistente.")
